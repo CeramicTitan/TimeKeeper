@@ -62,14 +62,17 @@ public class TimeKeeper extends JavaPlugin
 	    if(args.length == 1){
 		if ((args[0].equalsIgnoreCase("info")) || (args[0].equalsIgnoreCase("?"))) {
 		    sender.sendMessage(ChatColor.GOLD + "[TK] " + ChatColor.YELLOW + "TimeKeeper v" + this.version + " by " + ChatColor.RED + "CeramicTitan");
+		    if(sender.hasPermission("tk.check")){
+			sender.sendMessage("/timekeeper check <player> to check there latest clock in!");
+		    }
 		    return true;
+		}
 
 
-
-		}else if(args.length == 2){
-		    if(cmd.getName().equalsIgnoreCase("timekeeper")){
-			if(args[0].equalsIgnoreCase("check")){
-
+	    }else if(args.length == 2){
+		if(cmd.getName().equalsIgnoreCase("timekeeper")){
+		    if(args[0].equalsIgnoreCase("check")){
+			if(sender.hasPermission("tk.check")){
 			    Player p = getServer().getPlayerExact(args[1]);
 			    if(p !=null){
 				sender.sendMessage(p.getName()+" is online");
@@ -78,6 +81,7 @@ public class TimeKeeper extends JavaPlugin
 				File file = new File("plugins/TimeKeeper", args[1]+".txt");
 				if(file.exists()){
 				    try {
+					sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[1]+ChatColor.DARK_PURPLE+"=======");
 					sender.sendMessage(ModTxt.readFile("plugins/TimeKeeper", args[1]+".txt"));
 					return true;
 				    } catch (FileNotFoundException e) {
@@ -91,9 +95,11 @@ public class TimeKeeper extends JavaPlugin
 				}
 			    }
 			}
+		    }else{
+			sender.sendMessage(ChatColor.RED+"Invalid Permissions!");
 		    }
-
 		}
+
 	    }
 	}
 	return false;
