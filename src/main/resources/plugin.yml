@@ -3,7 +3,7 @@ description: Keeps staff play time.
 main: me.ceramictitan.timekeeper.TimeKeeper
 name: TimeKeeper
 url: 
-version: 1.1.3
+version: 1.1.6
 commands:
     timekeeper:
       description: base command
@@ -13,4 +13,7 @@ permissions:
       description: Players with this permission clock in and out.
     tk.announce.mod:
       description: Announces to the server when a player with this permission joins. Intended for announcing when Moderators join.
+      default: false
+    tk.check:
+      description: Players with this permission can check clock in and clock out statuses
       default: false
