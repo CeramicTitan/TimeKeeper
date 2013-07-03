@@ -63,40 +63,66 @@ public class TimeKeeper extends JavaPlugin
 		if ((args[0].equalsIgnoreCase("info")) || (args[0].equalsIgnoreCase("?"))) {
 		    sender.sendMessage(ChatColor.GOLD + "[TK] " + ChatColor.YELLOW + "TimeKeeper v" + this.version + " by " + ChatColor.RED + "CeramicTitan");
 		    if(sender.hasPermission("tk.check")){
-			sender.sendMessage("/timekeeper check <player> to check there latest clock in!");
+			sender.sendMessage("/timekeeper check <flag> <player> to check different clock in modes!");
+			sender.sendMessage(ChatColor.GREEN+"Applicable flags: -a: All clock in and clock out statuses; -l: For the latest clock in and clock out status.");
 		    }
 		    return true;
 		}
 
 
-	    }else if(args.length == 2){
+	    }else if(args.length == 3){
 		if(cmd.getName().equalsIgnoreCase("timekeeper")){
 		    if(args[0].equalsIgnoreCase("check")){
 			if(sender.hasPermission("tk.check")){
-			    Player p = getServer().getPlayerExact(args[1]);
-			    if(p !=null){
-				sender.sendMessage(p.getName()+" is online");
-				return true;
-			    }else{
-				File file = new File("plugins/TimeKeeper", args[1]+".txt");
-				if(file.exists()){
-				    try {
-					sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[1]+ChatColor.DARK_PURPLE+"=======");
-					sender.sendMessage(ModTxt.readFile("plugins/TimeKeeper", args[1]+".txt"));
-					return true;
-				    } catch (FileNotFoundException e) {
-					e.printStackTrace();
-				    } catch (IOException e) {
-					e.printStackTrace();
-				    }
-				}else{
-				    sender.sendMessage(args[1]+".txt doesn't exist!");
+			    if(args[1].equalsIgnoreCase("-a")){
+				Player p = getServer().getPlayerExact(args[2]);
+				if(p !=null){
+				    sender.sendMessage(p.getName()+" is online");
 				    return true;
+				}else{
+				    File file = new File("plugins/TimeKeeper", args[2]+".txt");
+				    if(file.exists()){
+					try {
+					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.DARK_PURPLE+"=======");
+					    sender.sendMessage(ModTxt.readFile("plugins/TimeKeeper", args[2]+".txt"));
+					    return true;
+					} catch (FileNotFoundException e) {
+					    e.printStackTrace();
+					} catch (IOException e) {
+					    e.printStackTrace();
+					}
+				    }else{
+					sender.sendMessage(args[1]+".txt doesn't exist!");
+					return true;
+				    }
+				}
+
+
+
+			    }else if(args[1].equalsIgnoreCase("-l")){
+				Player p = getServer().getPlayerExact(args[2]);
+				if(p !=null){
+				    sender.sendMessage(p.getName()+" is online");
+				    return true;
+				}else{
+				    File file = new File("plugins/TimeKeeper", args[2]+".txt");
+				    if(file.exists()){
+					try {
+					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.DARK_PURPLE+"=======");
+					    ModTxt.readLatestEntry("plugins/TimeKeeper", args[2]+".txt", sender);
+					    return true;
+					} catch (FileNotFoundException e) {
+					    e.printStackTrace();
+					} catch (IOException e) {
+					    e.printStackTrace();
+					}
+				    }else{
+					sender.sendMessage(args[2]+".txt doesn't exist!");
+					return true;
+				    }
 				}
 			    }
 			}
-		    }else{
-			sender.sendMessage(ChatColor.RED+"Invalid Permissions!");
 		    }
 		}
 
