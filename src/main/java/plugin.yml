@@ -1,0 +1,19 @@
+author: CeramicTitan
+description: Keeps staff play time.
+main: me.ceramictitan.timekeeper.TimeKeeper
+name: TimeKeeper
+url: 
+version: 1.5.2
+commands:
+    timekeeper:
+      description: base command
+    
+permissions:
+    tk.clock:
+      description: Players with this permission clock in and out.
+    tk.announce.mod:
+      description: Announces to the server when a player with this permission joins. Intended for announcing when Moderators join.
+      default: false
+    tk.announce.special:
+      description: Broadcasts a personalized announcement to the server for players with this permission. The player can change it at will.
+      default: false
