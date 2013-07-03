@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ceramictitan.TimeKeeper</groupId>
     <artifactId>TimeKeeper</artifactId>
-    <version>1.1.5</version>
+    <version>1.1.6</version>
     <name>TimeKeeper</name>
     <url>https://github.com/CeramicTitan/TimeKeeper</url>
     <issueManagement>
