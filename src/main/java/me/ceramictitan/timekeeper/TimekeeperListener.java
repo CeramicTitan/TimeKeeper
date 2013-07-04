@@ -35,7 +35,7 @@ implements Listener
 
 	if (player.hasPermission("tk.clock")) {
 	    String path = "plugins/TimeKeeper";
-	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaa");
+	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mma");
 	    long clockmilis = System.currentTimeMillis();
 	    this.clockinmilis = clockmilis;
 	    File pFile = new File("plugins/TimeKeeper", pName + ".txt");
@@ -63,7 +63,7 @@ implements Listener
 	if (player.hasPermission("tk.clock")) {
 	    String path = "plugins/TimeKeeper";
 	    long calmilis = System.currentTimeMillis();
-	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaa");
+	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mma");
 	    long miliduration = calmilis - this.clockinmilis; 
 	    if (miliduration < 0L)
 	    {
