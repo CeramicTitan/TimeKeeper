@@ -83,7 +83,7 @@ public class TimeKeeper extends JavaPlugin
 				    File file = new File("plugins/TimeKeeper", args[2]+".txt");
 				    if(file.exists()){
 					try {
-					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.DARK_PURPLE+"=======");
+					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.YELLOW+"(All)"+ChatColor.DARK_PURPLE+"=======");
 					    sender.sendMessage(ModTxt.readFile("plugins/TimeKeeper", args[2]+".txt"));
 					    return true;
 					} catch (FileNotFoundException e) {
@@ -108,7 +108,7 @@ public class TimeKeeper extends JavaPlugin
 				    File file = new File("plugins/TimeKeeper", args[2]+".txt");
 				    if(file.exists()){
 					try {
-					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.DARK_PURPLE+"=======");
+					    sender.sendMessage(ChatColor.DARK_PURPLE+"======="+ChatColor.DARK_AQUA+args[2]+ChatColor.YELLOW+"(Latest)"+ChatColor.DARK_PURPLE+"=======");
 					    ModTxt.readLatestEntry("plugins/TimeKeeper", args[2]+".txt", sender);
 					    return true;
 					} catch (FileNotFoundException e) {
@@ -121,6 +121,9 @@ public class TimeKeeper extends JavaPlugin
 					return true;
 				    }
 				}
+			    }else{
+				sender.sendMessage(ChatColor.RED+"Non applicable flag!");
+				sender.sendMessage(ChatColor.DARK_AQUA+"Type /timekeeper info for applicable flags!");
 			    }
 			}
 		    }

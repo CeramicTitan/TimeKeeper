@@ -35,7 +35,7 @@ implements Listener
 
 	if (player.hasPermission("tk.clock")) {
 	    String path = "plugins/TimeKeeper";
-	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaaa");
+	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaa");
 	    long clockmilis = System.currentTimeMillis();
 	    this.clockinmilis = clockmilis;
 	    File pFile = new File("plugins/TimeKeeper", pName + ".txt");
@@ -46,7 +46,7 @@ implements Listener
 		this.plugin.getLogger().log(Level.INFO, "File " + pFile + " doesn't exist! Creating file...");
 		pFile = new File(path, pName + ".txt");
 		pFile.createNewFile();
-		ModTxt.clockIn(pFile, clockTime.format(new Date()));
+		ModTxt.firstClockIn(pFile, clockTime.format(new Date()));
 		this.plugin.getLogger().log(Level.INFO, "File " + pFile + " created, log has been updated.");
 	    }
 	}
@@ -63,7 +63,7 @@ implements Listener
 	if (player.hasPermission("tk.clock")) {
 	    String path = "plugins/TimeKeeper";
 	    long calmilis = System.currentTimeMillis();
-	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaaa");
+	    SimpleDateFormat clockTime = new SimpleDateFormat("d/MMM/yyyy hh:mmaa");
 	    long miliduration = calmilis - this.clockinmilis; 
 	    if (miliduration < 0L)
 	    {
@@ -78,9 +78,6 @@ implements Listener
 		this.plugin.getLogger().log(Level.SEVERE, "File " + pFile + " doesn't exist! Creating file...");
 		pFile = new File(path, pName + ".txt");
 		pFile.createNewFile();
-		ModTxt.clockOut(pFile, clockTime.format(new Date()));
-		ModTxt.clockTime(pFile, duration, player);
-		this.plugin.getLogger().log(Level.INFO, "File " + pFile + " created, log has been updated.");
 	    }
 	}
     }

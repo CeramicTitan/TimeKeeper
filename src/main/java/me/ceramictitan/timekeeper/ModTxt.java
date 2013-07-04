@@ -16,12 +16,32 @@ import org.bukkit.entity.Player;
 
 public class ModTxt
 {
+
+    protected static void firstClockIn(File f, String string)
+	    throws IOException
+	    {
+	try
+	{
+	    BufferedWriter edit = new BufferedWriter(new FileWriter(f, true));
+	    edit.write("  -Clock In: " + string);
+	    edit.flush();
+	    edit.close();
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	    }
+
+
+
     protected static void clockIn(File f, String string)
 	    throws IOException
 	    {
 	try
 	{
 	    BufferedWriter edit = new BufferedWriter(new FileWriter(f, true));
+	    edit.newLine();
 	    edit.write("  -Clock In: " + string);
 	    edit.flush();
 	    edit.close();
