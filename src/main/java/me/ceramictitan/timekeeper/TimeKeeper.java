@@ -3,6 +3,8 @@ package me.ceramictitan.timekeeper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TimeKeeper extends JavaPlugin
 {
     public final Logger logger = Logger.getLogger("Minecraft");
+    public Map<String,String> log = new HashMap<String,String>(); // Format: <Player name>, Player name | Clock in: dd/mm/yyyy time | Clock Out: dd/mm/yyyy time | Total time logged in: Clock in - Clock Out. -> stored in logs.yml
     public TimeKeeper plugin;
     public String version;
     File pluginDir = new File("plugins/TimeKeeper");
