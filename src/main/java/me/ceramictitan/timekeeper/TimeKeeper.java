@@ -24,7 +24,7 @@ public class TimeKeeper extends JavaPlugin
     public String version;
     File pluginDir = new File("plugins/TimeKeeper");
 
-    public TimekeeperListener TKListener = new TimekeeperListener(this);
+    public TimeListener TKListener = new TimeListener();
 
     @Override
     public void onEnable()

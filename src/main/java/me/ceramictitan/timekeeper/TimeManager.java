@@ -12,9 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by maxine on 22/01/14.
- */
+
 public class TimeManager {
     FileConfiguration data = new YamlConfiguration();
 
@@ -42,52 +40,57 @@ public class TimeManager {
     }
     protected int getDays(String time1, String time2){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        int days = 0;
         try {
             Date checkin = sdf.parse(time1);
             Date checkout = sdf.parse(time2);
             long difference = checkout.getTime() - checkin.getTime();
-            return (int) (difference / (1000*60*60*24));
+            days =  (int) (difference / (1000*60*60*24));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-
+        return days;
     }
     protected int getHours(String time1, String time2){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        int hours = 0;
         try {
             Date checkin = sdf.parse(time1);
             Date checkout = sdf.parse(time2);
             long difference = checkout.getTime() - checkin.getTime();
-            return (int) ((difference - (1000*60*60*24*getDays(time1,time2))) / (1000*60*60));
+            hours= (int)(difference / (60 * 60 * 1000));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        return hours;
     }
     protected int getMinutes(String time1, String time2){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        int mins = 0;
         try {
             Date checkin = sdf.parse(time1);
             Date checkout = sdf.parse(time2);
             long difference = checkout.getTime() - checkin.getTime();
-            return (int) (difference - (1000*60*60*24*getDays(time1,time2)) - (1000*60*60*getHours(time1,time2))) / (1000*60);
+            mins = (int)(difference / (60 * 1000) % 60);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return mins;
 
     }
     protected int getSeconds(String time1, String time2){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        int secs = 0;
         try {
             Date checkin = sdf.parse(time1);
             Date checkout = sdf.parse(time2);
             long difference = checkout.getTime() - checkin.getTime();
-            return (int) (difference /1000);
+            secs = (int)(difference/1000%60);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+    return secs;
     }
 
     protected boolean playerFileExists(String playerName){
