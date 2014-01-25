@@ -25,19 +25,13 @@ public class AdminTracker extends JavaPlugin {
         PluginDescriptionFile pdFile = getDescription();
         manager = new TrackManager(this);
         String ver = pdFile.getVersion();
+        getConfig().addDefault("");
         getLogger().info(" AdminTracker " + ver + " is enabled.");
         pm.registerEvents(new TrackListener(this), this);
     }
 
     @Override
     public void onDisable() {
-        for (String keys : manager.getLogCache().keySet()){
-            try {
-                manager.saveDataFile(keys);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         PluginDescriptionFile pdFile = getDescription();
         String ver = pdFile.getVersion();
         getLogger().info(" AdminTracker " + ver + " is now disbaled.");
