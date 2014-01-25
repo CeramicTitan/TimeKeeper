@@ -137,7 +137,13 @@ public class TrackManager {
     }
 
     protected void addToCheckout(String name, String time) {
-        checkincache.put(name, time);
+        checkoutcache.put(name, time);
+    }
+    protected void removeFromCheckin(String name){
+        checkincache.remove(name);
+    }
+    protected void removeFromCheckout(String name){
+        checkoutcache.remove(name);
     }
 
     protected boolean alreadyInCheckInCache(String name) {
