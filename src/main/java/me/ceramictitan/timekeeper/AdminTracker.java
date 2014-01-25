@@ -15,32 +15,29 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdminTracker extends JavaPlugin {
-    public final Logger logger = Logger.getLogger("Minecraft");
-     // Format: <Player name>, Player name | Clock in: dd/mm/yyyy time | Clock Out: dd/mm/yyyy time | Total time logged in: Clock in - Clock Out. -> stored in logs.yml
+    // Format: <Player name>, Player name | Clock in: dd/mm/yyyy time | Clock Out: dd/mm/yyyy time | Total time logged in: Clock in - Clock Out. -> stored in logs.yml
     public AdminTracker plugin;
-    public String version;
-    File pluginDir = new File("plugins/AdminTracker");
-
-    public TrackListener TKListener = new TrackListener();
+    private TrackManager manager;
 
     @Override
     public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
         PluginDescriptionFile pdFile = getDescription();
+        manager = new TrackManager(this);
         String ver = pdFile.getVersion();
-        this.version = pdFile.getVersion();
-       getLogger().info(" AdminTracker " + ver + " is enabled.");
-        if (!this.pluginDir.exists()) {
-            this.logger.log(Level.SEVERE, "Plugin directory not found! Creating...");
-            this.pluginDir.mkdir();
-            this.logger.log(Level.INFO, "Plugin directory created successfully.");
-        }
-
-        pm.registerEvents(this.TKListener, this);
+        getLogger().info(" AdminTracker " + ver + " is enabled.");
+        pm.registerEvents(new TrackListener(this), this);
     }
 
     @Override
     public void onDisable() {
+        for (String keys : manager.getLogCache().keySet()){
+            try {
+                manager.saveDataFile(keys);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         PluginDescriptionFile pdFile = getDescription();
         String ver = pdFile.getVersion();
         getLogger().info(" AdminTracker " + ver + " is now disbaled.");
@@ -49,12 +46,12 @@ public class AdminTracker extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("timekeeper")) {
+        if (cmd.getName().equalsIgnoreCase("admintracker")) {
             if (args.length == 1) {
-                if ((args[0].equalsIgnoreCase("info")) || (args[0].equalsIgnoreCase("?"))) {
-                    sender.sendMessage(ChatColor.GOLD + "[TK] " + ChatColor.YELLOW + "AdminTracker v" + this.version + " by " + ChatColor.RED + "CeramicTitan");
-                    if (sender.hasPermission("tk.check")) {
-                        sender.sendMessage("/timekeeper check <flag> <player> to check different clock in modes!");
+                if ((args[0].equalsIgnoreCase("help"))) {
+                    sender.sendMessage(ChatColor.YELLOW + "AdminTracker v" + this.getDescription().getVersion() + " by " + ChatColor.RED + "CeramicTitan");
+                    if (sender.hasPermission("at.check")) {
+                        sender.sendMessage("/adminwatch <flag> <player> to check different clock in modes!");
                         sender.sendMessage(ChatColor.GREEN + "Applicable flags: -a: All clock in and clock out statuses; -l: For the latest clock in and clock out status.");
                     }
                     return true;
@@ -62,28 +59,22 @@ public class AdminTracker extends JavaPlugin {
 
 
             } else if (args.length == 3) {
-                if (cmd.getName().equalsIgnoreCase("timekeeper")) {
-                    if (args[0].equalsIgnoreCase("check")) {
-                        if (sender.hasPermission("tk.check") || sender.isOp()) {
+                        if (sender.hasPermission("at.check") || sender.isOp()) {
                             if (args[1].equalsIgnoreCase("-a")) {
                                 Player p = getServer().getPlayerExact(args[2]);
                                 if (p != null) {
                                     sender.sendMessage(p.getName() + " is online");
                                     return true;
                                 } else {
-                                    File file = new File("plugins/AdminTracker", args[2] + ".txt");
-                                    if (file.exists()) {
-                                        try {
-                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + file.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
-                                            sender.sendMessage(ModTxt.readFile("plugins/AdminTracker", args[2] + ".txt"));
-                                            return true;
-                                        } catch (FileNotFoundException e) {
-                                            e.printStackTrace();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        if(manager.playerFileExists(p.getName())){
+                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
+                                            for(String log : manager.getLog(args[2])){
+                                                sender.sendMessage(log);
+                                            }
+                                        return true;
+
                                     } else {
-                                        sender.sendMessage(args[1] + ".txt doesn't exist!");
+                                        sender.sendMessage(args[1] + ".yml doesn't exist!");
                                         return true;
                                     }
                                 }
@@ -95,19 +86,12 @@ public class AdminTracker extends JavaPlugin {
                                     sender.sendMessage(p.getName() + " is online");
                                     return true;
                                 } else {
-                                    File file = new File("plugins/AdminTracker", args[2] + ".txt");
-                                    if (file.exists()) {
-                                        try {
-                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + file.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
-                                            ModTxt.readLatestEntry("plugins/AdminTracker", args[2] + ".txt", sender);
+                                   if(manager.playerFileExists(p.getName())){
+                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
+                                            sender.sendMessage(manager.getLatestEntry(p.getName()));
                                             return true;
-                                        } catch (FileNotFoundException e) {
-                                            e.printStackTrace();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
                                     } else {
-                                        sender.sendMessage(args[2] + ".txt doesn't exist!");
+                                        sender.sendMessage(p.getName() + ".yml doesn't exist!");
                                         return true;
                                     }
                                 }
@@ -116,8 +100,6 @@ public class AdminTracker extends JavaPlugin {
                                 sender.sendMessage(ChatColor.DARK_AQUA + "Type /timekeeper info for applicable flags!");
                             }
                         }
-                    }
-                }
 
             }
         }

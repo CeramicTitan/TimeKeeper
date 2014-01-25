@@ -17,10 +17,13 @@ import java.util.logging.Logger;
 
 
 public class TrackManager {
-    FileConfiguration data = new YamlConfiguration();
+    AdminTracker plugin;
     Map<String, String> checkincache = new HashMap<String, String>();
     Map<String, String> checkoutcache = new HashMap<String, String>();
     Map<String, List<String>> log = new HashMap<String, List<String>>();
+    public TrackManager(AdminTracker plugin){
+        this.plugin=plugin;
+    }
 
     protected void createRecord(String playerName) throws IOException {
         File dir = new File("plugins/AdminTracker");
@@ -103,10 +106,20 @@ public class TrackManager {
     }
 
     protected FileConfiguration loadDataFile(String playerName) throws IOException, InvalidConfigurationException {
+        FileConfiguration data = new YamlConfiguration();
         File dir = new File("plugins/AdminTracker");
         File file = new File(dir, playerName + ".yml");
         data.load(file);
         return data;
+
+    }
+
+    protected void saveDataFile(String playerName) throws IOException {
+        FileConfiguration data = new YamlConfiguration();
+        File dir = new File("plugins/AdminTracker");
+        File file = new File(dir, playerName + ".yml");
+        data.set("log", getLog(playerName));
+        data.save(file);
 
     }
 
@@ -143,43 +156,58 @@ public class TrackManager {
 
     }
 
-    protected void logTime(String name, String checkin, String checkout) {
-        List<String> temp = new ArrayList<String>();
+    protected void logTime(String name, String checkin, String checkout) throws IOException, InvalidConfigurationException {
+        FileConfiguration data = loadDataFile(name);
+        List<String> temp = data.getStringList("log");
+        if(data == null || temp == null || temp.size() >=  plugin.getConfig().getInt("log-dump-size",60)){
+            temp = new ArrayList<String>();
+        }
         StringBuilder sb = null;
-       sb = sb.append(name).append(" | ")
+        sb = sb.append(name).append(" | ")
           .append("Checkin:")
           .append(checkin).append(" | ")
           .append("Checkout:")
           .append(checkout).append(" | ")
           .append("Total time online:")
-          .append(getDays(checkin,checkout)).append(" Days ")
-          .append(getHours(checkin,checkout))
-          .append(" Hours ").append(getMinutes(checkin,checkout))
+          .append(getDays(checkin, checkout)).append(" Days ")
+          .append(getHours(checkin, checkout))
+          .append(" Hours ").append(getMinutes(checkin, checkout))
           .append(" Minutes ")
-          .append(getSeconds(checkin,checkout))
+          .append(getSeconds(checkin, checkout))
           .append(" Seconds ");
         temp.add(sb.toString());
         log.put(name, temp);
     }
-    protected List<String> getLog(String name){
+
+    protected List<String> getLog(String name) {
         return log.get(name);
     }
-    protected boolean hasLog(String name){
+
+    protected boolean hasLog(String name) {
         return log.containsKey(name);
 
     }
-    protected String getSplit(int index, List<String> list){
+
+    protected String getSplit(int index, List<String> list) {
         String temp = null;
-        for(String string  : list){
+        for (String string : list) {
             String[] split = string.split("\\s+\\|\\s+");
             temp = split[index];
         }
         return temp;
     }
-    protected void clearCache(){
+
+    protected void clearCache() {
         checkincache.clear();
         checkincache.clear();
         log.clear();
+    }
+
+    protected Map<String, List<String>> getLogCache() {
+        return log;
+    }
+    protected String getLatestEntry(String name){
+        return getLog(name).get(getLog(name).size()-1);
     }
 
 }
