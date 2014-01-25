@@ -122,6 +122,15 @@ public class TrackManager {
         data.save(file);
 
     }
+    protected void dumpLog(String name) throws IOException {
+        FileConfiguration data = new YamlConfiguration();
+        File dir = new File("plugins/AdminTracker");
+        File file = new File(dir, name + ".yml");
+        List<String> temp = new ArrayList<String>();
+        data.set("log", temp);
+        data.save(file);
+
+    }
 
     protected void addToCheckIn(String name, String time) {
         checkincache.put(name, time);

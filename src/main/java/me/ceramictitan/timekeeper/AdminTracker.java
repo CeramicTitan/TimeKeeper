@@ -57,16 +57,26 @@ public class AdminTracker extends JavaPlugin {
                     return true;
                 }
 
-
+            }else if(args.length == 2){
+                if(args[0].equalsIgnoreCase("purge")){
+                    if(manager.playerFileExists(args[1])){
+                        try {
+                            manager.dumpLog(args[1]);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                }
             } else if (args.length == 3) {
                         if (sender.hasPermission("at.check") || sender.isOp()) {
                             if (args[1].equalsIgnoreCase("-a")) {
                                 Player p = getServer().getPlayerExact(args[2]);
                                 if (p != null) {
-                                    sender.sendMessage(p.getName() + " is online");
+                                    sender.sendMessage(args[2] + " is online");
                                     return true;
                                 } else {
-                                        if(manager.playerFileExists(p.getName())){
+                                        if(manager.playerFileExists(args[2])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
                                             for(String log : manager.getLog(args[2])){
                                                 sender.sendMessage(log);
@@ -86,8 +96,8 @@ public class AdminTracker extends JavaPlugin {
                                     sender.sendMessage(p.getName() + " is online");
                                     return true;
                                 } else {
-                                   if(manager.playerFileExists(p.getName())){
-                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
+                                   if(manager.playerFileExists(args[2])){
+                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + args[2] + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
                                             sender.sendMessage(manager.getLatestEntry(p.getName()));
                                             return true;
                                     } else {
