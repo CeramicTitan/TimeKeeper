@@ -25,7 +25,9 @@ public class AdminTracker extends JavaPlugin {
         PluginDescriptionFile pdFile = getDescription();
         manager = new TrackManager(this);
         String ver = pdFile.getVersion();
-        getConfig().addDefault("");
+        getConfig().addDefault("log-dump-size", 60);
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         getLogger().info(" AdminTracker " + ver + " is enabled.");
         pm.registerEvents(new TrackListener(this), this);
     }
@@ -101,7 +103,7 @@ public class AdminTracker extends JavaPlugin {
                                 }
                             } else {
                                 sender.sendMessage(ChatColor.RED + "Non applicable flag!");
-                                sender.sendMessage(ChatColor.DARK_AQUA + "Type /timekeeper info for applicable flags!");
+                                sender.sendMessage(ChatColor.DARK_AQUA + "Type /admintracker info for applicable flags!");
                             }
                         }
 

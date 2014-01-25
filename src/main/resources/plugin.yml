@@ -9,11 +9,11 @@ commands:
       description: base command
     
 permissions:
-    tk.clock:
+    at.clock:
       description: Players with this permission clock in and out.
-    tk.announce.mod:
+    at.notify:
       description: Announces to the server when a player with this permission joins. Intended for announcing when Moderators join.
       default: false
-    tk.check:
+    at.check:
       description: Players with this permission can check clock in and clock out statuses
       default: false

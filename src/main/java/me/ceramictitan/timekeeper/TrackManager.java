@@ -175,7 +175,11 @@ public class TrackManager {
         FileConfiguration data = loadDataFile(name);
         List<String> temp = data.getStringList("log");
         if(data == null || temp == null || temp.size() >=  plugin.getConfig().getInt("log-dump-size",60)){
-            temp = new ArrayList<String>();
+            if(getLog(name) != null){
+                temp = getLog(name);
+            }else{
+                temp = new ArrayList<String>();
+            }
         }
         StringBuilder sb = null;
         sb = sb.append(name).append(" | ")
