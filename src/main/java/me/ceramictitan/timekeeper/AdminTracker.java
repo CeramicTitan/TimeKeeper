@@ -34,6 +34,13 @@ public class AdminTracker extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for(String keys : manager.log.keySet()){
+            try {
+                manager.saveDataFile(keys);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         PluginDescriptionFile pdFile = getDescription();
         String ver = pdFile.getVersion();
         getLogger().info(" AdminTracker " + ver + " is now disbaled.");
@@ -54,9 +61,13 @@ public class AdminTracker extends JavaPlugin {
                 }
 
             }else if(args.length == 2){
-                if(args[0].equalsIgnoreCase("purge")){
+                if(args[0].equalsIgnoreCase("purge") && sender.hasPermission("at.purge")){
                     if(manager.playerFileExists(args[1])){
                         try {
+                            if(manager.getLog(args[1]) == null || manager.getLog(args[1]).size() == 0){
+                                sender.sendMessage("Nothing to dump!");
+                                return true;
+                            }
                             manager.dumpLog(args[1]);
                         } catch (IOException e) {
                             e.printStackTrace();
