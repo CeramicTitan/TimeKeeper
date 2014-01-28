@@ -207,15 +207,6 @@ public class TrackManager {
 
     }
 
-    protected String getSplit(int index, List<String> list) {
-        String temp = null;
-        for (String string : list) {
-            String[] split = string.split("\\s+\\|\\s+");
-            temp = split[index];
-        }
-        return temp;
-    }
-
     protected void clearCache() {
         checkincache.clear();
         checkincache.clear();

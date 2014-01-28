@@ -26,6 +26,7 @@ public class AdminTracker extends JavaPlugin {
         manager = new TrackManager(this);
         String ver = pdFile.getVersion();
         getConfig().addDefault("log-dump-size", 60);
+        getConfig().addDefault("admin-join", "Welcome to the server {player}. He is staff!");
         getConfig().options().copyDefaults(true);
         saveConfig();
         getLogger().info(" AdminTracker " + ver + " is enabled.");
