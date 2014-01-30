@@ -1,7 +1,7 @@
 author: CeramicTitan
 description: Keeps staff play time.
-main: me.ceramictitan.timekeeper.TimeKeeper
-name: TimeKeeper
+main: me.ceramictitan.admintracker.AdminTracker
+name: AdminTracker
 url: 
 version: 1.1.6
 commands:

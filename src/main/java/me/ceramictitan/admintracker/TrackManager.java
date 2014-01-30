@@ -1,13 +1,11 @@
-package me.ceramictitan.timekeeper;
+package me.ceramictitan.admintracker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,16 +112,16 @@ public class TrackManager {
 
     }
 
-    protected void saveDataFile(String playerName) throws IOException {
-        FileConfiguration data = new YamlConfiguration();
+    protected void saveDataFile(String playerName) throws IOException, InvalidConfigurationException {
+        FileConfiguration data = loadDataFile(playerName);
         File dir = new File("plugins/AdminTracker");
         File file = new File(dir, playerName + ".yml");
         data.set("log", getLog(playerName));
         data.save(file);
 
     }
-    protected void dumpLog(String name) throws IOException {
-        FileConfiguration data = new YamlConfiguration();
+    protected void dumpLog(String name) throws IOException, InvalidConfigurationException {
+        FileConfiguration data = loadDataFile(name);
         File dir = new File("plugins/AdminTracker");
         File file = new File(dir, name + ".yml");
         List<String> temp = new ArrayList<String>();
@@ -181,7 +179,7 @@ public class TrackManager {
                 temp = new ArrayList<String>();
             }
         }
-        StringBuilder sb = null;
+        StringBuilder sb =new StringBuilder();
         sb = sb.append(name).append(" | ")
           .append("Checkin:")
           .append(checkin).append(" | ")

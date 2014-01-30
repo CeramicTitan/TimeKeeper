@@ -1,14 +1,11 @@
-package me.ceramictitan.timekeeper;
+package me.ceramictitan.admintracker;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -36,9 +33,12 @@ public class AdminTracker extends JavaPlugin {
     @Override
     public void onDisable() {
         for(String keys : manager.log.keySet()){
+            System.out.println(keys);
             try {
                 manager.saveDataFile(keys);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
                 e.printStackTrace();
             }
         }
@@ -71,6 +71,8 @@ public class AdminTracker extends JavaPlugin {
                             }
                             manager.dumpLog(args[1]);
                         } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InvalidConfigurationException e) {
                             e.printStackTrace();
                         }
                     }
