@@ -19,7 +19,7 @@ public class TrackListener implements Listener {
 
     public TrackListener(AdminTracker plugin) {
         this.plugin = plugin;
-        this.manager = new TrackManager(plugin);
+        this.manager = plugin.getManager();
     }
 
 

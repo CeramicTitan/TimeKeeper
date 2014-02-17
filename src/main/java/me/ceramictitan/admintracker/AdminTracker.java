@@ -29,6 +29,9 @@ public class AdminTracker extends JavaPlugin {
         getLogger().info(" AdminTracker " + ver + " is enabled.");
         pm.registerEvents(new TrackListener(this), this);
     }
+    public TrackManager getManager(){
+        return manager;
+    }
 
     @Override
     public void onDisable() {
