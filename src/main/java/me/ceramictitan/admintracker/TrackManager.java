@@ -24,7 +24,7 @@ public class TrackManager {
     }
 
     protected void createRecord(String playerName) throws IOException {
-        File dir = new File("plugins/AdminTracker");
+        File dir = new File("plugins/AdminTracker/Users");
         File file = new File(dir, playerName + ".yml");
         dir.mkdir();
         file.createNewFile();
@@ -98,14 +98,14 @@ public class TrackManager {
     }
 
     protected boolean playerFileExists(String playerName) {
-        File dir = new File("plugins/AdminTracker");
+        File dir = new File("plugins/AdminTracker/Users");
         File file = new File(dir, playerName + ".yml");
         return file.exists();
     }
 
     protected FileConfiguration loadDataFile(String playerName) throws IOException, InvalidConfigurationException {
         FileConfiguration data = new YamlConfiguration();
-        File dir = new File("plugins/AdminTracker");
+        File dir = new File("plugins/AdminTracker/Users");
         File file = new File(dir, playerName + ".yml");
         data.load(file);
         return data;
@@ -114,7 +114,7 @@ public class TrackManager {
 
     protected void saveDataFile(String playerName) throws IOException, InvalidConfigurationException {
         FileConfiguration data = loadDataFile(playerName);
-        File dir = new File("plugins/AdminTracker");
+        File dir = new File("plugins/AdminTracker/Users");
         File file = new File(dir, playerName + ".yml");
         data.set("log", getLog(playerName));
         data.save(file);
@@ -122,7 +122,7 @@ public class TrackManager {
     }
     protected void dumpLog(String name) throws IOException, InvalidConfigurationException {
         FileConfiguration data = loadDataFile(name);
-        File dir = new File("plugins/AdminTracker");
+        File dir = new File("plugins/AdminTracker/Users");
         File file = new File(dir, name + ".yml");
         List<String> temp = new ArrayList<String>();
         data.set("log", temp);
@@ -154,10 +154,6 @@ public class TrackManager {
 
     protected Logger getLogger() {
         return Bukkit.getLogger();
-    }
-
-    protected void log(Level level, String error) {
-        getLogger().log(level, error);
     }
 
     protected String getCheckoutTime(String name) {
@@ -193,22 +189,23 @@ public class TrackManager {
           .append(getSeconds(checkin, checkout))
           .append(" Seconds ");
         temp.add(sb.toString());
-        log.put(name, temp);
+        getLogCache().put(name, temp);
+        System.out.println("keySet: "+getLogCache().keySet().size());
     }
 
     protected List<String> getLog(String name) {
-        return log.get(name);
+        return getLogCache().get(name);
     }
 
     protected boolean hasLog(String name) {
-        return log.containsKey(name);
+        return getLogCache().containsKey(name);
 
     }
 
     protected void clearCache() {
+        checkoutcache.clear();
         checkincache.clear();
-        checkincache.clear();
-        log.clear();
+        getLogCache().clear();
     }
 
     protected Map<String, List<String>> getLogCache() {

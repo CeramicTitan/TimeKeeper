@@ -32,7 +32,11 @@ public class AdminTracker extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for(String keys : manager.log.keySet()){
+        if(manager.getLogCache().keySet().isEmpty()){
+            System.out.println("keySet is empty");
+            return;
+        }
+        for(String keys : manager.getLogCache().keySet()){
             System.out.println(keys);
             try {
                 manager.saveDataFile(keys);
@@ -42,6 +46,7 @@ public class AdminTracker extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+        manager.clearCache();
         PluginDescriptionFile pdFile = getDescription();
         String ver = pdFile.getVersion();
         getLogger().info(" AdminTracker " + ver + " is now disbaled.");
@@ -78,17 +83,17 @@ public class AdminTracker extends JavaPlugin {
                     }
                     return true;
                 }
-            } else if (args.length == 3) {
+            } else if (args.length == 2) {
                         if (sender.hasPermission("at.check") || sender.isOp()) {
-                            if (args[1].equalsIgnoreCase("-a")) {
-                                Player p = getServer().getPlayerExact(args[2]);
+                            if (args[0].equalsIgnoreCase("-a")) {
+                                Player p = getServer().getPlayerExact(args[1]);
                                 if (p != null) {
-                                    sender.sendMessage(args[2] + " is online");
+                                    sender.sendMessage(args[1] + " is online");
                                     return true;
                                 } else {
-                                        if(manager.playerFileExists(args[2])){
+                                        if(manager.playerFileExists(args[1])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
-                                            for(String log : manager.getLog(args[2])){
+                                            for(String log : manager.getLog(args[1])){
                                                 sender.sendMessage(log);
                                             }
                                         return true;
@@ -100,14 +105,14 @@ public class AdminTracker extends JavaPlugin {
                                 }
 
 
-                            } else if (args[1].equalsIgnoreCase("-l")) {
-                                Player p = getServer().getPlayerExact(args[2]);
+                            } else if (args[0].equalsIgnoreCase("-l")) {
+                                Player p = getServer().getPlayerExact(args[1]);
                                 if (p != null) {
                                     sender.sendMessage(p.getName() + " is online");
                                     return true;
                                 } else {
-                                   if(manager.playerFileExists(args[2])){
-                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + args[2] + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
+                                   if(manager.playerFileExists(args[1])){
+                                            sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
                                             sender.sendMessage(manager.getLatestEntry(p.getName()));
                                             return true;
                                     } else {

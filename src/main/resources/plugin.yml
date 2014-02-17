@@ -5,7 +5,7 @@ name: AdminTracker
 url: 
 version: 1.1.6
 commands:
-    timekeeper:
+    admintracker:
       description: base command
     
 permissions:
