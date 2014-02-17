@@ -1,11 +1,15 @@
 package me.ceramictitan.admintracker;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -35,6 +39,7 @@ public class AdminTracker extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        FileConfiguration data = null;
         if(manager.getLogCache().keySet().isEmpty()){
             System.out.println("keySet is empty");
             return;
@@ -96,10 +101,16 @@ public class AdminTracker extends JavaPlugin {
                                 } else {
                                         if(manager.playerFileExists(args[1])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
-                                            for(String log : manager.getLog(args[1])){
-                                                sender.sendMessage(log);
+                                            try {
+                                                for(String log : manager.getLog(args[1])){
+                                                    sender.sendMessage(log);
+                                                }
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            } catch (InvalidConfigurationException e) {
+                                                e.printStackTrace();
                                             }
-                                        return true;
+                                            return true;
 
                                     } else {
                                         sender.sendMessage(args[1] + ".yml doesn't exist!");
@@ -116,7 +127,6 @@ public class AdminTracker extends JavaPlugin {
                                 } else {
                                    if(manager.playerFileExists(args[1])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
-                                            sender.sendMessage(manager.getLatestEntry(p.getName()));
                                             return true;
                                     } else {
                                         sender.sendMessage(p.getName() + ".yml doesn't exist!");

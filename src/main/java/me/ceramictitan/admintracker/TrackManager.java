@@ -166,35 +166,37 @@ public class TrackManager {
     }
 
     protected void logTime(String name, String checkin, String checkout) throws IOException, InvalidConfigurationException {
-        FileConfiguration data = loadDataFile(name);
-        List<String> temp = data.getStringList("log");
-        if(data == null || temp == null || temp.size() >=  plugin.getConfig().getInt("log-dump-size",60)){
-            if(getLog(name) != null){
-                temp = getLog(name);
-            }else{
-                temp = new ArrayList<String>();
-            }
-        }
-        StringBuilder sb =new StringBuilder();
-        sb = sb.append(name).append(" | ")
-          .append("Checkin:")
-          .append(checkin).append(" | ")
-          .append("Checkout:")
-          .append(checkout).append(" | ")
-          .append("Total time online:")
+        List<String> temp = getLog(name);
+        StringBuilder sb = new StringBuilder();
+        sb = sb.append(name).append("/")
+          .append("Checkin: ")
+          .append(checkin).append("/")
+          .append("Checkout: ")
+          .append(checkout).append("/")
+          .append("Total time online: ")
           .append(getDays(checkin, checkout)).append(" Days ")
           .append(getHours(checkin, checkout))
           .append(" Hours ").append(getMinutes(checkin, checkout))
           .append(" Minutes ")
           .append(getSeconds(checkin, checkout))
-          .append(" Seconds ");
+          .append(" Seconds");
         temp.add(sb.toString());
         getLogCache().put(name, temp);
         System.out.println("keySet: "+getLogCache().keySet().size());
     }
 
-    protected List<String> getLog(String name) {
-        return getLogCache().get(name);
+    protected List<String> getLog(String name) throws IOException, InvalidConfigurationException {
+        List<String> temp = new ArrayList<String>();
+        if(getLogCache().get(name) == null || getLogCache().get(name).size() >=  plugin.getConfig().getInt("log-dump-size",60)){
+            return temp;
+        }
+        if(getLogCache().get(name) != null){
+        for(String entries : loadDataFile(name).getStringList("log")){
+            getLogCache().get(name).add(entries);
+        }
+            return getLogCache().get(name);
+        }
+        return null;
     }
 
     protected boolean hasLog(String name) {
@@ -210,9 +212,6 @@ public class TrackManager {
 
     protected Map<String, List<String>> getLogCache() {
         return log;
-    }
-    protected String getLatestEntry(String name){
-        return getLog(name).get(getLog(name).size()-1);
     }
 
 }
