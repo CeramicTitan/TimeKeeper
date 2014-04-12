@@ -5,8 +5,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,16 +18,10 @@ public class TrackManager {
     Map<String, String> checkincache = new HashMap<String, String>();
     Map<String, String> checkoutcache = new HashMap<String, String>();
     Map<String, List<String>> log = new HashMap<String, List<String>>();
+    private LogManager logManager;
     public TrackManager(AdminTracker plugin){
         this.plugin=plugin;
-    }
-
-    protected void createRecord(String playerName) throws IOException {
-        File dir = new File("plugins/AdminTracker/Users");
-        File file = new File(dir, playerName + ".yml");
-        dir.mkdir();
-        file.createNewFile();
-
+        this.logManager = plugin.getLogManager();
     }
 
     protected String getTime() {
@@ -97,39 +90,6 @@ public class TrackManager {
         return secs;
     }
 
-    protected boolean playerFileExists(String playerName) {
-        File dir = new File("plugins/AdminTracker/Users");
-        File file = new File(dir, playerName + ".yml");
-        return file.exists();
-    }
-
-    protected FileConfiguration loadDataFile(String playerName) throws IOException, InvalidConfigurationException {
-        FileConfiguration data = new YamlConfiguration();
-        File dir = new File("plugins/AdminTracker/Users");
-        File file = new File(dir, playerName + ".yml");
-        data.load(file);
-        return data;
-
-    }
-
-    protected void saveDataFile(String playerName) throws IOException, InvalidConfigurationException {
-        FileConfiguration data = loadDataFile(playerName);
-        File dir = new File("plugins/AdminTracker/Users");
-        File file = new File(dir, playerName + ".yml");
-        data.set("log", getLog(playerName));
-        data.save(file);
-
-    }
-    protected void dumpLog(String name) throws IOException, InvalidConfigurationException {
-        FileConfiguration data = loadDataFile(name);
-        File dir = new File("plugins/AdminTracker/Users");
-        File file = new File(dir, name + ".yml");
-        List<String> temp = new ArrayList<String>();
-        data.set("log", temp);
-        data.save(file);
-
-    }
-
     protected void addToCheckIn(String name, String time) {
         checkincache.put(name, time);
     }
@@ -165,38 +125,15 @@ public class TrackManager {
 
     }
 
-    protected void logTime(String name, String checkin, String checkout) throws IOException, InvalidConfigurationException {
-        List<String> temp = getLog(name);
-        StringBuilder sb = new StringBuilder();
-        sb = sb.append(name).append("/")
-          .append("Checkin: ")
-          .append(checkin).append("/")
-          .append("Checkout: ")
-          .append(checkout).append("/")
-          .append("Total time online: ")
-          .append(getDays(checkin, checkout)).append(" Days ")
-          .append(getHours(checkin, checkout))
-          .append(" Hours ").append(getMinutes(checkin, checkout))
-          .append(" Minutes ")
-          .append(getSeconds(checkin, checkout))
-          .append(" Seconds");
-        temp.add(sb.toString());
-        getLogCache().put(name, temp);
-        System.out.println("keySet: "+getLogCache().keySet().size());
-    }
-
     protected List<String> getLog(String name) throws IOException, InvalidConfigurationException {
         List<String> temp = new ArrayList<String>();
-        if(getLogCache().get(name) == null || getLogCache().get(name).size() >=  plugin.getConfig().getInt("log-dump-size",60)){
-            return temp;
+        File file = logManager.getPlayerFile(name);
+        BufferedReader buf = new BufferedReader(new FileReader(file));
+        String line = null;
+        while((line = buf.readLine()) != null){
+            temp.add(line);
         }
-        if(getLogCache().get(name) != null){
-        for(String entries : loadDataFile(name).getStringList("log")){
-            getLogCache().get(name).add(entries);
-        }
-            return getLogCache().get(name);
-        }
-        return null;
+        return temp;
     }
 
     protected boolean hasLog(String name) {

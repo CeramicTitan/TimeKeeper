@@ -16,10 +16,12 @@ import java.util.regex.Pattern;
 public class TrackListener implements Listener {
     private AdminTracker plugin;
     TrackManager manager;
+    LogManager logManager;
 
     public TrackListener(AdminTracker plugin) {
         this.plugin = plugin;
         this.manager = plugin.getManager();
+        this.logManager = plugin.getLogManager();
     }
 
 
@@ -33,9 +35,9 @@ public class TrackListener implements Listener {
             message = message.replaceAll(Pattern.quote("{player}"),event.getPlayer().getName());
             message = ChatColor.translateAlternateColorCodes('&',message);
             Bukkit.getServer().broadcastMessage(message);
-            if(!manager.playerFileExists(name)){
+            if(!logManager.playerFileExists(name)){
                 try {
-                    manager.createRecord(name);
+                    logManager.createRecord(name);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -58,10 +60,8 @@ public class TrackListener implements Listener {
             int minutes = manager.getMinutes(checkin, checkout);
             int seconds = manager.getSeconds(checkin, checkout);
             try {
-                manager.logTime(name, checkin, checkout);
+                logManager.logToFile(name, checkin, checkout);
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
                 e.printStackTrace();
             }
             for (Player admins : Bukkit.getServer().getOnlinePlayers()) {
@@ -72,7 +72,7 @@ public class TrackListener implements Listener {
                       + minutes + " Minutes "
                       + seconds + " Seconds.");
                     break;
-                }
+            }
             }
             System.out.print(name + " just logged out! They played for "
               + days + " Days "
@@ -82,7 +82,7 @@ public class TrackListener implements Listener {
             if(manager.alreadyInCheckInCache(name) && manager.alreadyInCheckoutCache(name)){
                 manager.removeFromCheckin(name);
                 manager.removeFromCheckout(name);
-            }
-        }
+    }
+    }
     }
 }

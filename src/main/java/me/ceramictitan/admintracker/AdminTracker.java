@@ -19,15 +19,17 @@ public class AdminTracker extends JavaPlugin {
     // Format: <Player name>, Player name | Clock in: dd/mm/yyyy time | Clock Out: dd/mm/yyyy time | Total time logged in: Clock in - Clock Out. -> stored in logs.yml
     public AdminTracker plugin;
     private TrackManager manager;
+    private LogManager logManager;
 
     @Override
     public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
         PluginDescriptionFile pdFile = getDescription();
         manager = new TrackManager(this);
+        logManager = new LogManager(this);
         String ver = pdFile.getVersion();
         getConfig().addDefault("log-dump-size", 60);
-        getConfig().addDefault("admin-join", "Welcome to the server {player}. He is staff!");
+        getConfig().addDefault("admin-join", "Welcome to the server {player}. They are staff!");
         getConfig().options().copyDefaults(true);
         saveConfig();
         getLogger().info(" AdminTracker " + ver + " is enabled.");
@@ -36,24 +38,11 @@ public class AdminTracker extends JavaPlugin {
     public TrackManager getManager(){
         return manager;
     }
+    public LogManager getLogManager(){return logManager;}
 
     @Override
     public void onDisable() {
         FileConfiguration data = null;
-        if(manager.getLogCache().keySet().isEmpty()){
-            System.out.println("keySet is empty");
-            return;
-        }
-        for(String keys : manager.getLogCache().keySet()){
-            System.out.println(keys);
-            try {
-                manager.saveDataFile(keys);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-        }
         manager.clearCache();
         PluginDescriptionFile pdFile = getDescription();
         String ver = pdFile.getVersion();
@@ -76,13 +65,12 @@ public class AdminTracker extends JavaPlugin {
 
             }else if(args.length == 2){
                 if(args[0].equalsIgnoreCase("purge") && sender.hasPermission("at.purge")){
-                    if(manager.playerFileExists(args[1])){
+                    if(logManager.playerFileExists(args[1])){
                         try {
                             if(manager.getLog(args[1]) == null || manager.getLog(args[1]).size() == 0){
                                 sender.sendMessage("Nothing to dump!");
                                 return true;
                             }
-                            manager.dumpLog(args[1]);
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (InvalidConfigurationException e) {
@@ -99,7 +87,7 @@ public class AdminTracker extends JavaPlugin {
                                     sender.sendMessage(args[1] + " is online");
                                     return true;
                                 } else {
-                                        if(manager.playerFileExists(args[1])){
+                                        if(logManager.playerFileExists(args[1])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(All)" + ChatColor.DARK_PURPLE + "=======");
                                             try {
                                                 for(String log : manager.getLog(args[1])){
@@ -125,7 +113,7 @@ public class AdminTracker extends JavaPlugin {
                                     sender.sendMessage(p.getName() + " is online");
                                     return true;
                                 } else {
-                                   if(manager.playerFileExists(args[1])){
+                                   if(logManager.playerFileExists(args[1])){
                                             sender.sendMessage(ChatColor.DARK_PURPLE + "=======" + ChatColor.DARK_AQUA + p.getName() + ChatColor.YELLOW + "(Latest)" + ChatColor.DARK_PURPLE + "=======");
                                             return true;
                                     } else {
